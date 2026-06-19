@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Logs{% endblock %}
+{% block section_title %}Upload Telemetry Logfiles{% endblock %}
+
+{% block content %}
+<div class="content-section" style="max-width: 800px; margin: 0 auto; width: 100%;">
+    <div class="section-head">
+        <h2 class="section-title">Upload Audit Trails</h2>
+    </div>
+    
+    <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 20px;">
+        Submit security log files to Z+ Security parsing engine. The system will automatically validate the file format, extract access details (IP, timestamps, events), execute windowed brute-force evaluations, and update threat intelligence metrics.
+    </p>
+
+    <!-- Upload Form with Drag and Drop Zone -->
+    <form id="uploadForm" action="{{ url_for('upload_logs') }}" method="POST" enctype="multipart/form-data">
+        
+        <!-- Hide the input accessibly so browser validations are focusable -->
+        <input type="file" id="logFileInput" name="logfile" accept=".log,.txt,.csv" style="opacity: 0; width: 0.1px; height: 0.1px; position: absolute; overflow: hidden; z-index: -1;" required>
+        
+        <div class="upload-dropzone" id="uploadDropzone">
+            <div class="upload-icon">
+                <i class="fas fa-cloud-arrow-up"></i>
+            </div>
+            <div class="upload-title">Drag & Drop Logfile Here</div>
+            <div class="upload-desc">or click this zone to select from computer directory</div>
+            <div class="upload-formats">Supported Extensions: <b>.log</b>, <b>.txt</b>, <b>.csv</b></div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+            <button type="submit" class="btn-primary" style="padding: 12px 30px;">
+                <i class="fas fa-gears"></i>
+                <span>Parse & Run Threat Analyzer</span>
+            </button>
+        </div>
+    </form>
+
+    <div style="margin-top: 40px; border-top: 1px solid var(--border-color); padding-top: 25px;">
+        <h3 style="font-family: var(--font-heading); font-size: 1rem; margin-bottom: 12px;">Parser Engine Specifications:</h3>
+        <ul style="color: var(--text-muted); font-size: 0.85rem; padding-left: 20px; line-height: 1.8;">
+            <li><b>Space-Separated Format:</b> Parses standard format structured as: <code>[YYYY-MM-DD HH:MM:SS] [Action Descriptor] [IP Address]</code></li>
+            <li><b>CSV Spreadsheet Format:</b> Auto-maps columns matching headers like: <i>date, time, action, event, ip, address</i>.</li>
+            <li><b>Window Scan:</b> Processes sliding intervals to check for brute force logins (10 failed tries within 5 mins).</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
