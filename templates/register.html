@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Register Profile{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card" style="max-width: 460px;">
+        
+        <div class="auth-header">
+            <div class="auth-logo" style="color: var(--green); border-color: rgba(0, 255, 170, 0.2); filter: drop-shadow(0 0 5px var(--green));">
+                <i class="fas fa-user-plus"></i>
+            </div>
+            <h1 class="auth-title">Register Profile</h1>
+            <p class="auth-subtitle">Initialize your security credentials</p>
+        </div>
+
+        <form action="{{ url_for('register') }}" method="POST" class="auth-form">
+            <div class="form-group">
+                <label for="name" class="form-label">Full Name</label>
+                <div class="input-container">
+                    <i class="fas fa-id-card"></i>
+                    <input type="text" id="name" name="name" class="input-field" placeholder="Enter full name" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email" class="form-label">Email Address</label>
+                <div class="input-container">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" name="email" class="input-field" placeholder="Enter corporate email" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="username" class="form-label">Desired Username</label>
+                <div class="input-container">
+                    <i class="fas fa-user-secret"></i>
+                    <input type="text" id="username" name="username" class="input-field" placeholder="Choose username" required autocomplete="username">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">Security Password</label>
+                <div class="input-container">
+                    <i class="fas fa-key"></i>
+                    <input type="password" id="password" name="password" class="input-field" placeholder="Min. 6 characters" required autocomplete="new-password">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px; background: linear-gradient(135deg, #00ffaa 0%, #00aa77 100%); color: #020617; box-shadow: 0 0 15px rgba(0, 255, 170, 0.25);">
+                <i class="fas fa-user-shield"></i>
+                <span>Register Analyst Account</span>
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <span>Already have a profile? </span>
+            <a href="{{ url_for('login') }}">Verify Credentials</a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
