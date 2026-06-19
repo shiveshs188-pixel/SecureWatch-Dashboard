@@ -1,0 +1,20 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environments
+venv/
+ENV/
+env/
+.env
+
+# Database
+database/securewatch.db
+
+# Reports and temporary uploads
+reports/*.pdf
+reports/*.csv
+uploads/*
+!uploads/.gitkeep
