@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Alert Manager{% endblock %}
+{% block section_title %}Incident Alert Manager{% endblock %}
+
+{% block content %}
+<div class="content-section">
+    <div class="section-head">
+        <h2 class="section-title">Active Security Ledger</h2>
+    </div>
+
+    <!-- Searching and Filtering Controls -->
+    <form method="GET" action="{{ url_for('alerts_page') }}" class="filter-bar">
+        <input type="text" name="search" class="filter-input" placeholder="Search IP or Threat..." value="{{ search_query or '' }}">
+        
+        <select name="risk" class="filter-select">
+            <option value="">All Risk Levels</option>
+            <option value="High" {% if risk_filter == 'High' %}selected{% endif %}>High Risk</option>
+            <option value="Medium" {% if risk_filter == 'Medium' %}selected{% endif %}>Medium Risk</option>
+            <option value="Low" {% if risk_filter == 'Low' %}selected{% endif %}>Low Risk</option>
+        </select>
+        
+        <select name="status" class="filter-select">
+            <option value="">All Statuses</option>
+            <option value="Open" {% if status_filter == 'Open' %}selected{% endif %}>Open</option>
+            <option value="Investigating" {% if status_filter == 'Investigating' %}selected{% endif %}>Investigating</option>
+            <option value="Resolved" {% if status_filter == 'Resolved' %}selected{% endif %}>Resolved</option>
+        </select>
+        
+        <button type="submit" class="btn-primary" style="padding: 8px 16px; font-size: 0.85rem;">
+            <i class="fas fa-filter"></i> Apply Filters
+        </button>
+        
+        <a href="{{ url_for('alerts_page') }}" class="btn-secondary" style="padding: 8px 16px; font-size: 0.85rem;">
+            <i class="fas fa-rotate-left"></i> Clear
+        </a>
+    </form>
+
+    <!-- Incident Alerts Table -->
+    <div class="table-responsive">
+        <table class="cyber-table">
+            <thead>
+                <tr>
+                    <th>Alert ID</th>
+                    <th>Threat Event</th>
+                    <th>Source IP</th>
+                    <th>Risk Class</th>
+                    <th>Timestamp</th>
+                    <th>Incident Status Badge</th>
+                    <th>Action: Assign State</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for alert in alerts %}
+                <tr>
+                    <td><small style="font-family: var(--font-mono); color: var(--text-muted);">#{{ alert.id }}</small></td>
+                    <td><b>{{ alert.threat_type }}</b></td>
+                    <td><code style="font-family: var(--font-mono); color: var(--cyan);">{{ alert.ip_address }}</code></td>
+                    <td>
+                        <span class="badge {{ alert.risk_level | lower }}">
+                            {{ alert.risk_level }}
+                        </span>
+                    </td>
+                    <td><small style="color: var(--text-muted);">{{ alert.created_at }}</small></td>
+                    <td>
+                        <span id="status-badge-{{ alert.id }}" class="badge status-{{ alert.status | lower }}">
+                            {{ alert.status }}
+                        </span>
+                    </td>
+                    <td>
+                        <!-- Dropdown triggers ajax call in main.js without full-page refreshes -->
+                        <select class="status-select" onchange="onAlertStatusChange(this, {{ alert.id }})">
+                            <option value="Open" {% if alert.status == 'Open' %}selected{% endif %}>Open</option>
+                            <option value="Investigating" {% if alert.status == 'Investigating' %}selected{% endif %}>Investigating</option>
+                            <option value="Resolved" {% if alert.status == 'Resolved' %}selected{% endif %}>Resolved</option>
+                        </select>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 40px;">
+                        <i class="fas fa-shield-halved" style="font-size: 2rem; color: var(--border-color); margin-bottom: 10px; display: block;"></i>
+                        No matching incident alerts located.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
