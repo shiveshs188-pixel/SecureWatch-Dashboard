@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Export Reports{% endblock %}
+{% block section_title %}Threat Analytics Export Center{% endblock %}
+
+{% block content %}
+<div class="content-section" style="max-width: 900px; margin: 0 auto; width: 100%;">
+    <div class="section-head">
+        <h2 class="section-title">Incident Reports Compilation</h2>
+    </div>
+
+    <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 30px;">
+        Compile operational status lists and download threat detection reports. Z+ Security supports printing formatted executive PDF reports or raw structured CSV lists for external security information and event management (SIEM) ingestion.
+    </p>
+
+    <!-- Grid Layout of Export Options -->
+    <div class="reports-layout">
+        <!-- PDF Executive Card -->
+        <div class="report-card">
+            <div class="report-meta">
+                <div style="font-size: 1.75rem; color: var(--red); margin-bottom: 8px;">
+                    <i class="fas fa-file-pdf"></i>
+                </div>
+                <h3 class="report-title">Executive PDF Report</h3>
+                <p class="report-desc">
+                    Generates a visually stylized report containing database stats, classified risk counts, lists of suspicious IP addresses, and detailed tables of recent security events. Ideal for audits and leadership review.
+                </p>
+            </div>
+            <a href="{{ url_for('export_pdf') }}" class="btn-primary" style="margin-top: auto;">
+                <i class="fas fa-file-arrow-down"></i>
+                <span>Download Executive PDF</span>
+            </a>
+        </div>
+
+        <!-- CSV Dataset Card -->
+        <div class="report-card">
+            <div class="report-meta">
+                <div style="font-size: 1.75rem; color: var(--cyan); margin-bottom: 8px;">
+                    <i class="fas fa-file-csv"></i>
+                </div>
+                <h3 class="report-title">Alert CSV Ledger</h3>
+                <p class="report-desc">
+                    Exports a structured spreadsheet containing every recorded incident. Columns include: alert IDs, risk labels, source IP addresses, state indices, and precise timestamps.
+                </p>
+            </div>
+            <a href="{{ url_for('export_csv') }}" class="btn-secondary" style="margin-top: auto; border-color: rgba(0, 243, 255, 0.25); color: var(--cyan);">
+                <i class="fas fa-table-list"></i>
+                <span>Export Dataset CSV</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Active Summary Metric Panel -->
+    <div style="margin-top: 40px; background: rgba(10, 15, 26, 0.4); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px;">
+        <h3 style="font-family: var(--font-heading); font-size: 1rem; margin-bottom: 15px; color: var(--text-main);">
+            <i class="fas fa-circle-nodes" style="color: var(--cyan); margin-right: 8px;"></i>
+            Current Database Ledger Indices
+        </h3>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; text-align: center;">
+            <div style="background: rgba(255,255,255,0.02); padding: 12px; border-radius: 6px; border: 1px solid var(--border-color);">
+                <span style="font-size: 0.75rem; color: var(--text-muted); display: block; text-transform: uppercase;">Logs Recorded</span>
+                <b style="font-size: 1.25rem; font-family: var(--font-heading); color: var(--text-main); margin-top: 4px; display: inline-block;">{{ stats.total_logs }}</b>
+            </div>
+            <div style="background: rgba(255,255,255,0.02); padding: 12px; border-radius: 6px; border: 1px solid var(--border-color);">
+                <span style="font-size: 0.75rem; color: var(--text-muted); display: block; text-transform: uppercase;">Incidents Flagged</span>
+                <b style="font-size: 1.25rem; font-family: var(--font-heading); color: var(--orange); margin-top: 4px; display: inline-block;">{{ stats.total_threats }}</b>
+            </div>
+            <div style="background: rgba(255,255,255,0.02); padding: 12px; border-radius: 6px; border: 1px solid var(--border-color);">
+                <span style="font-size: 0.75rem; color: var(--text-muted); display: block; text-transform: uppercase;">Critical Risks</span>
+                <b style="font-size: 1.25rem; font-family: var(--font-heading); color: var(--red); margin-top: 4px; display: inline-block;">{{ stats.high_risk_threats }}</b>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
