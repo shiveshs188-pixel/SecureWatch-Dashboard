@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+{% block section_title %}Threat Intelligence Dashboard{% endblock %}
+
+{% block content %}
+<!-- Top Metrics Overview -->
+<div class="stats-grid">
+    <div class="stat-card analyzed">
+        <div class="stat-details">
+            <span class="stat-label">Total Logs Analyzed</span>
+            <span class="stat-value">{{ stats.total_logs }}</span>
+        </div>
+        <div class="stat-icon">
+            <i class="fas fa-file-invoice"></i>
+        </div>
+    </div>
+    
+    <div class="stat-card threats">
+        <div class="stat-details">
+            <span class="stat-label">Total Threats</span>
+            <span class="stat-value">{{ stats.total_threats }}</span>
+        </div>
+        <div class="stat-icon">
+            <i class="fas fa-triangle-exclamation"></i>
+        </div>
+    </div>
+    
+    <div class="stat-card highrisk">
+        <div class="stat-details">
+            <span class="stat-label">High Risk Alerts</span>
+            <span class="stat-value">{{ stats.high_risk_threats }}</span>
+        </div>
+        <div class="stat-icon">
+            <i class="fas fa-radiation"></i>
+        </div>
+    </div>
+    
+    <div class="stat-card safe">
+        <div class="stat-details">
+            <span class="stat-label">Safe Logs</span>
+            <span class="stat-value">{{ stats.safe_events }}</span>
+        </div>
+        <div class="stat-icon">
+            <i class="fas fa-circle-check"></i>
+        </div>
+    </div>
+</div>
+
+<!-- Main Section Grid -->
+<div class="content-section">
+    <div class="section-head">
+        <h2 class="section-title">Telemetry Visualizations</h2>
+    </div>
+    
+    <!-- Chart Visuals Row -->
+    <div class="charts-row">
+        <!-- Doughnut distribution chart -->
+        <div class="chart-card">
+            <h3 class="chart-title">Threat Distribution</h3>
+            <div class="chart-container">
+                <canvas id="threatPieChart"></canvas>
+            </div>
+        </div>
+        
+        <!-- Bar failure charts -->
+        <div class="chart-card">
+            <h3 class="chart-title">Failed Logins Per Source IP</h3>
+            <div class="chart-container">
+                <canvas id="failedBarChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Alerts Ledger -->
+    <div class="section-head" style="margin-top: 15px;">
+        <h2 class="section-title">Recent Security Alerts</h2>
+        <a href="{{ url_for('alerts_page') }}" class="btn-secondary" style="padding: 6px 14px; font-size: 0.8rem;">
+            <i class="fas fa-list"></i> View All Alerts
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="cyber-table">
+            <thead>
+                <tr>
+                    <th>IP Address</th>
+                    <th>Threat Event / Type</th>
+                    <th>Risk Class</th>
+                    <th>Current Status</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for alert in recent_alerts %}
+                <tr>
+                    <td><code style="font-family: var(--font-mono); color: var(--cyan);">{{ alert.ip_address }}</code></td>
+                    <td>{{ alert.threat_type }}</td>
+                    <td>
+                        <span class="badge {{ alert.risk_level | lower }}">
+                            {{ alert.risk_level }}
+                        </span>
+                    </td>
+                    <td>
+                        <span id="status-badge-{{ alert.id }}" class="badge status-{{ alert.status | lower }}">
+                            {{ alert.status }}
+                        </span>
+                    </td>
+                    <td><small style="color: var(--text-muted);">{{ alert.created_at }}</small></td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;">
+                        <i class="fas fa-shield" style="font-size: 1.5rem; margin-bottom: 10px; display: block; color: var(--border-color);"></i>
+                        No alerts detected. Clean audit trail.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Safely inject Python lists/dicts into JS execution context
+    const rawPieData = {{ pie_data | tojson }};
+    const rawBarData = {{ bar_data | tojson }};
+    
+    // Trigger render engine in main.js
+    initDashboardCharts(rawPieData, rawBarData);
+</script>
+{% endblock %}
