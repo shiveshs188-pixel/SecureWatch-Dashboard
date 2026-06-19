@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Z+ Security{% endblock %} - Cybersecurity Dashboard</title>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- App Design Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- Chart.js Engine -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    {% block head %}{% endblock %}
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <!-- Cyber Sidebar Navigation -->
+        {% if session.get('user_id') %}
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fas fa-shield-halved"></i>
+                <span>Z+ SECURITY</span>
+            </div>
+            
+            <ul class="nav-links">
+                <li class="{% if request.path == '/' or request.path == '/dashboard' %}active{% endif %}">
+                    <a href="{{ url_for('dashboard') }}">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="{% if request.path == '/upload' %}active{% endif %}">
+                    <a href="{{ url_for('upload_logs') }}">
+                        <i class="fas fa-cloud-arrow-up"></i>
+                        <span>Upload Logs</span>
+                    </a>
+                </li>
+                <li class="{% if request.path == '/alerts' %}active{% endif %}">
+                    <a href="{{ url_for('alerts_page') }}">
+                        <i class="fas fa-triangle-exclamation"></i>
+                        <span>Alert Manager</span>
+                    </a>
+                </li>
+                <li class="{% if request.path == '/reports' %}active{% endif %}">
+                    <a href="{{ url_for('reports_page') }}">
+                        <i class="fas fa-file-contract"></i>
+                        <span>Export Reports</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="user-profile">
+                <div class="profile-info">
+                    <div class="profile-avatar">
+                        {{ session.get('name', 'U')[0] | upper }}
+                    </div>
+                    <div class="profile-meta">
+                        <span class="profile-name">{{ session.get('name', 'User') }}</span>
+                        <span class="profile-role">Security Analyst</span>
+                    </div>
+                </div>
+                <a href="{{ url_for('logout') }}" class="btn-logout">
+                    <i class="fas fa-power-off"></i>
+                    <span>Log Out</span>
+                </a>
+            </div>
+        </aside>
+        {% endif %}
+
+        <!-- Content Area -->
+        <main class="main-content" style="{% if not session.get('user_id') %}margin-left: 0; width: 100%;{% endif %}">
+            
+            <!-- Top Navbar (Only if logged in) -->
+            {% if session.get('user_id') %}
+            <nav class="top-navbar">
+                <div class="page-title">
+                    {% block section_title %}Overview{% endblock %}
+                </div>
+                <div class="live-indicator">
+                    <div class="pulse-dot"></div>
+                    <span>LIVE WATCH ACTIVE</span>
+                </div>
+            </nav>
+            {% endif %}
+            
+            <!-- Flash Alert Banners -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="alert-banner {{ category }}">
+                                <i class="fas {% if category == 'success' %}fa-circle-check{% else %}fa-circle-exclamation{% endif %}"></i>
+                                <span>{{ message }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </main>
+        
+    </div>
+
+    <!-- Main Client-Side Logic -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
